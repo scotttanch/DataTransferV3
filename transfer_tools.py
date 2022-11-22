@@ -18,7 +18,7 @@ def todays_stack(search_dir):
     filtered = []
     for f in files:
         if (f.split(".")[1] == "DZT") and (dt.fromtimestamp(os.path.getmtime(f))+td(days=1) > dt.today()):
-            filtered.append(f.split('\\')[-1])
+            filtered.append(f.split('/')[-1])
     filtered.sort(key=lambda x: os.path.getmtime(x))
     return filtered
 
@@ -32,7 +32,7 @@ def full_stack(search_dir):
     filtered = []
     for f in files:
         if (f.split(".")[1] == "DZT"):
-            filtered.append(f.split('\\')[-1])
+            filtered.append(f.split('/')[-1])
     filtered.sort(key=lambda x: os.path.getmtime(x))
     return filtered
 
@@ -80,17 +80,22 @@ def gen_send(conn,obj):
 #     dzt_contents (bin): binary string containing the actual file data
 #     realsense_contents (bin): binary string contraining the survey path
 class DZT_DAT:
-    def __init__(self,path):
-        self.origin_path = path
-        self.file_name = self.origin_path.rpartition('\\')[-1]
+    def __init__(self,path,f_mode):
+        self.file_name = path
         with open(self.file_name,'rb') as f:
             self.dzt_contents = f.read()
-        self.realsensefile = self.file_name.split('.')[0]+('.csv')
-        try:
-            with open(self.realsensefile,'rb') as f:
-                self.realsense_contents = f.read()
-        except:
-            self.realsense_contents = []
+        self.realsense_file = self.file_name.split('.')[0]+('.csv')
+        self.realsense_contents = []
+        if f_mode == True:
+            while self.realsense_contents == []:
+                try:
+                    with open(self.realsense_file,'rb') as f:
+                        self.realsense_contents = f.read()
+                except:
+                    print("Looking for realsense path...")
+                    time.sleep(5)
+
+
         
     def b_scan(self):
         header,array,_ = readdzt(self.file_name)
