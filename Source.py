@@ -48,8 +48,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 next_file = request_stack.pop()
                 print("Sending ",next_file)
                 next_dzt = tls.DZT_DAT(next_file,f_mode)
-                print(next_dzt.file_name)
-                print(next_dzt.realsense_file)
                 tls.gen_send(s,next_dzt)
                 b_scan = tls.gen_recv(s)
                 print("/home/stanch/public/b_scans/"+next_file.split('.')[0]+".png")
