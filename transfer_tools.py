@@ -4,34 +4,33 @@ import pickle
 from datetime import datetime as dt
 from datetime import timedelta as td
 from readgssi.dzt import readdzt
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 # returns a list of DZT files created on the current date, sorted by creation time
 # in: absolute path of the desired folder
 # out: list containing absolute paths of DZT files
-def todays_stack(search_dir):
+def todays_stack(search_dir,ext):
     os.chdir(search_dir)
     files = filter(os.path.isfile, os.listdir(search_dir))
     files = [os.path.join(search_dir, f) for f in files]
     filtered = []
     for f in files:
-        if (f.split(".")[1] == "DZT") and (dt.fromtimestamp(os.path.getmtime(f))+td(days=1) > dt.today()):
+        if (f.split(".")[1] == ext) and (dt.fromtimestamp(os.path.getmtime(f))+td(days=1) > dt.today()):
             filtered.append(f.split('/')[-1])
     filtered.sort(key=lambda x: os.path.getmtime(x))
     return filtered
 
-# returns a list of DZT files in a directory, sorted by creation time
-# in: absolute path of the desired folder
-# out: list containing absolute paths of DZT files
-def full_stack(search_dir):
+# returns a list of files in a directory with extension 'ext', sorted by creation time
+# in: absolute path of the desired folder, and desired extension i.e. exe, txt, csv (no period needed)
+# out: list containing absolute paths of files with extension ext
+def full_stack(search_dir,ext):
     os.chdir(search_dir)
     files = filter(os.path.isfile, os.listdir(search_dir))
     files = [os.path.join(search_dir, f) for f in files]
     filtered = []
     for f in files:
-        if (f.split(".")[1] == "DZT"):
+        if (f.split(".")[1] == ext):
             filtered.append(f.split('/')[-1])
     filtered.sort(key=lambda x: os.path.getmtime(x))
     return filtered
@@ -105,8 +104,8 @@ class DZT_DAT:
         fig = plt.imshow(traces)
         plt.savefig(self.file_name.split('.')[0]+".png",format='png')
         return
-        
-    def f_scan(self):
+    # This defininiton needs to be fixed
+    # def f_scan(self):
         if self.realsense_contents == []:
             print("No Survery Path Found...")
             print("Generating B Scan instead...")
