@@ -1,4 +1,4 @@
-import pyrealsense2 as rs
+import pyrealsense2.pyrealsense2 as rs
 import time
 import numpy as np
 import matplotlib.pyplot as plt
@@ -42,14 +42,11 @@ def survey():
 				break
 	return
 
-def save_file():
-	data = np.array([x_pos,y_pos,z_pos])
+def save_file(x,y,z):
+	data = np.array([x,y,z])
 	data = data.T
-	file_name =  input("Enter filename: ")
-	np.savetxt(file_name+".csv",data,delimiter=",")
-	x_pos = []
-	y_pos = []
-	z_pos = []
+	file_name =  input("Enter file number: ")
+	np.savetxt("/home/stanch/public/DZTs/FILE____"+file_name+".csv",data,delimiter=",")
 	return
 
 x_pos = []
@@ -61,12 +58,15 @@ cfg.enable_stream(rs.stream.pose)
 pipe.start(cfg)
 
 while True:
-	os.system("cls")
+	os.system("clear -x")
+	
 	print("Realsesne Position Tracking")
 	print("Reorient [1]")
 	print("Record Survey Line [2]")
 	print("Save Survey Line [3]")
 	print("Exit [4]")
+	if x_pos != []:
+	    print("A path exists in storage, save before continuing")
 	selection = input("")
 	if selection == "1":
 		print("Reorienting...")
@@ -76,12 +76,10 @@ while True:
 		survey()
 	if selection == "3":
 		print("Entering Save Mode...")
-		save_file()
+		save_file(x_pos,y_pos,z_pos)
 	if selection == "4":
 		print("Exiting Program")
 		break
-	else:
-		print("Invalid Selection")
-		time.sleep(0.5)
+
 pipe.stop()
 sys.exit(0)
