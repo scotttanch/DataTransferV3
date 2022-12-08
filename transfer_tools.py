@@ -8,15 +8,15 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 # returns a list of DZT files created on the current date, sorted by creation time
-# in: absolute path of the desired folder
-# out: list containing absolute paths of DZT files
-def todays_stack(search_dir,ext):
+# in: absolute path of the desired folder, the extension, and how many days to look back
+# out: list containing absolute paths of files
+def past_stack(search_dir,ext,past):
     os.chdir(search_dir)
     files = filter(os.path.isfile, os.listdir(search_dir))
     files = [os.path.join(search_dir, f) for f in files]
     filtered = []
     for f in files:
-        if (f.split(".")[1] == ext) and (dt.fromtimestamp(os.path.getmtime(f))+td(days=1) > dt.today()):
+        if (f.split(".")[1] == ext) and (dt.fromtimestamp(os.path.getmtime(f))+td(days=past) > dt.today()):
             filtered.append(f.split('/')[-1])
     filtered.sort(key=lambda x: os.path.getmtime(x))
     return filtered
